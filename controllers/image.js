@@ -38,7 +38,7 @@ const handleImage = (req, res, db) => {
                 // res.json(entries[0])
 
                 db.select('link').from('submits')
-                  .where('user','=',submitUser[0].toString())
+                  .where('user','=',submitUser[0])
                   .then(rows => {
                     res.json({_entries:entries[0], _links:rows})
                   })

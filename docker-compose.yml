@@ -1,0 +1,10 @@
+version: '3.9'
+
+services:
+  smart-brain-container:
+    container_name: backend
+    build: ./
+    command: npm start
+    working_dir: /usr/src/smart-brain-container
+    ports:
+      - '3333:3333'

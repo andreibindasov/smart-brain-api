@@ -14,6 +14,7 @@ const handleSignin = (db, bcrypt) => (req, res) => {
             db.select('link').from('submits')
               .where('user','=',user[0].id.toString())
               .then(rows => {
+                
                 console.log(rows)
                 res.json({_user:user[0], _links:rows})
               })

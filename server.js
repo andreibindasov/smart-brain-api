@@ -26,7 +26,7 @@ const app = express();
 app.use(cors())
 app.use(bodyParser.json());
 
-app.get('/', (req, res)=> { res.send(db.users) })
+app.get('/', (req, res)=> { res.send("IT's WORKING") })
 app.get('/profile/:id', (req, res) => { profile.handleProfileGet(req, res, db)})
 app.post('/signin', signin.handleSignin(db, bcrypt))
 app.post('/register', (req, res) => { register.handleRegister(req, res, db, bcrypt) })
@@ -47,6 +47,22 @@ app.put('/image', (req, res) => {
   })
 })
 
+
+
+app.get('/ranking', (req, res)=> {
+  
+  return db('submits')
+    .join('users','submits.user', 'users.id')
+        .select('users.name')
+        .count('submits.user', {as: 'count'})
+        .groupBy('users.name')
+        .orderBy('count', 'desc')
+    .then(rows => {
+      console.log(rows)
+      res.json(rows)
+    })
+                
+})
 
 app.listen(3333, ()=> {
   console.log('app is running on port 3333');
