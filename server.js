@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt-nodejs');
 const cors = require('cors');
 const knex = require('knex');
 const urlExists = require('url-exists');
+const morgan = require('morgan')
 
 const register = require('./controllers/register');
 const signin = require('./controllers/signin');
@@ -13,16 +14,23 @@ const image = require('./controllers/image');
 const db = knex({
   // connect to your own database here
   client: 'pg',
-  connection: {
-    host : '127.0.0.1',
-    user : 'postgres',
-    password : 'postgres',
-    database : 'smartbrain'
-  }
+  connection: process.env.POSTGRES_URI
+  // {
+    // // host : '127.0.0.1',
+    // host : process.env.POSTGRES_HOST,
+    // // user : 'postgres',
+    // user : process.env.POSTGRES_USER,
+    // // password : 'postgres',
+    // password : process.env.POSTGRES_PASSWORD,
+    // // database : 'smartbrain'
+    // database : process.env.POSTGRES_DB
+
+  // }
 });
 
 const app = express();
 
+app.use(morgan('combined'))
 app.use(cors())
 app.use(bodyParser.json());
 
@@ -54,7 +62,7 @@ app.get('/ranking', (req, res)=> {
   return db('submits')
     .join('users','submits.user', 'users.id')
         .select('users.name')
-        .count('submits.user', {as: 'count'})
+        .count('submits.user_id', {as: 'count'})
         .groupBy('users.name')
         .orderBy('count', 'desc')
     .then(rows => {

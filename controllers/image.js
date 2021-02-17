@@ -23,11 +23,11 @@ const handleImage = (req, res, db) => {
       } else {
         db.transaction(trx=>{
           trx.insert({
-            user: id,
+            user_id: id,
             link: input
           })
           .into('submits')
-          .returning('user')
+          .returning('user_id')
           .then(submitUser=>{
             return trx('users')
               .returning('*').where('id','=',submitUser[0])
@@ -38,7 +38,7 @@ const handleImage = (req, res, db) => {
                 // res.json(entries[0])
 
                 db.select('link').from('submits')
-                  .where('user','=',submitUser[0])
+                  .where('user_id','=',submitUser[0])
                   .then(rows => {
                     res.json({_entries:entries[0], _links:rows})
                   })

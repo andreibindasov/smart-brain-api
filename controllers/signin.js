@@ -12,7 +12,7 @@ const handleSignin = (db, bcrypt) => (req, res) => {
           .where('email', '=', email)
           .then(user => {
             db.select('link').from('submits')
-              .where('user','=',user[0].id.toString())
+              .where('user_id','=',user[0].id)
               .then(rows => {
                 
                 console.log(rows)
