@@ -14,7 +14,7 @@ const handleApiCall = (req, res) => {
 }
 
 const handleImage = (req, res, db) => {
-  const { id, input } = req.body;
+  const { id, input, boxes } = req.body;
   
   db.select('link').from("submits").where('link', '=', input)
     .then(data=>{
@@ -31,7 +31,7 @@ const handleImage = (req, res, db) => {
           .then(submitUser=>{
             return trx('users')
               .returning('*').where('id','=',submitUser[0])
-              .increment('entries', 1)
+              .increment('entries', boxes.length)
               .returning('entries')
               .then(entries=>{
                 // console.log(submitUser[0])
@@ -40,6 +40,7 @@ const handleImage = (req, res, db) => {
                 db.select('link').from('submits')
                   .where('user_id','=',submitUser[0])
                   .then(rows => {
+                    rows.push({link:input})
                     res.json({_entries:entries[0], _links:rows})
                   })
               })
