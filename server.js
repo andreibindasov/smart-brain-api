@@ -41,8 +41,6 @@ app.post('/register', (req, res) => { register.handleRegister(req, res, db, bcry
 app.post('/imageurl', (req, res) => { image.handleApiCall(req, res)})
 app.put('/image', (req, res) => { 
   
-  console.log(req.body.imageUrl)
-  
   urlExists(req.body.imageUrl, (err, exists)=>{
     if (exists && (req.body.imageUrl.toLowerCase().includes('.jpg') || 
                    req.body.imageUrl.toLowerCase().includes('.gif') || 
@@ -59,16 +57,20 @@ app.put('/image', (req, res) => {
 
 app.get('/ranking', (req, res)=> {
   
-  return db('submits')
-    .join('users','submits.user', 'users.id')
-        .select('users.name')
-        .count('submits.user_id', {as: 'count'})
-        .groupBy('users.name')
-        .orderBy('count', 'desc')
+  // return db('submits')
+  //   .join('users','submits.user_id', 'users.id')
+  //       .select('users.name')
+  //       .count('submits.user_id', {as: 'count'})
+  //       .groupBy('users.name')
+  //       .orderBy('count', 'desc')
+  return db('users')    
+    .select('name', 'entries') 
+    .orderBy('entries','desc') 
     .then(rows => {
       console.log(rows)
       res.json(rows)
     })
+    .catch(err => console.log("ERROR " + err))
                 
 })
 
