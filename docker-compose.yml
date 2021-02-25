@@ -9,10 +9,10 @@ services:
     working_dir: /usr/src/smart-brain-container
     environment:
       # POSTGRES_USER: 'postgres'  
-      # POSTGRES_PASSWORD: '1973BindaS'
+      # POSTGRES_PASSWORD: 'XXX'
       # POSTGRES_DB: 'smart-brain-docker'
       # POSTGRES_HOST: postgres
-      POSTGRES_URI: 'postgres://postgres:1973BindaS@postgres:5432/smart-brain-docker'
+      POSTGRES_URI: 'postgres://postgres:XXX@postgres:5432/smart-brain-docker'
     links:
       - postgres
     ports:
@@ -29,7 +29,7 @@ services:
       - '5432:5432'
     environment:
       POSTGRES_USER: 'postgres'  
-      POSTGRES_PASSWORD: '1973BindaS'
+      POSTGRES_PASSWORD: 'XXX'
       POSTGRES_DB: 'smart-brain-docker'
       POSTGRES_HOST: postgres
     # links:

@@ -67,7 +67,7 @@ app.get('/ranking', (req, res)=> {
     .select('name', 'entries') 
     .orderBy('entries','desc') 
     .then(rows => {
-      console.log(rows)
+      // console.log(rows)
       res.json(rows)
     })
     .catch(err => console.log("ERROR " + err))
