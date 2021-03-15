@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt-nodejs');
@@ -10,6 +12,9 @@ const register = require('./controllers/register');
 const signin = require('./controllers/signin');
 const profile = require('./controllers/profile');
 const image = require('./controllers/image');
+const auth = require('./controllers/authorization')
+
+
 
 const db = knex({
   // connect to your own database here
@@ -35,12 +40,12 @@ app.use(cors())
 app.use(bodyParser.json());
 
 app.get('/', (req, res)=> { res.send("IT's WORKING") })
-app.get('/profile/:id', (req, res) => { profile.handleProfileGet(req, res, db)})
-app.post('/profile/:id', (req, res) => { profile.handleProfileUpdate(req, res, db) } )
+app.get('/profile/:id', auth.requireAuth, (req, res) => { profile.handleProfileGet(req, res, db)})
+app.post('/profile/:id', auth.requireAuth, (req, res) => { profile.handleProfileUpdate(req, res, db) } )
 app.post('/signin', signin.signinAuthentication(db, bcrypt))
 app.post('/register', (req, res) => { register.handleRegister(req, res, db, bcrypt) })
-app.post('/imageurl', (req, res) => { image.handleApiCall(req, res)})
-app.put('/image', (req, res) => { 
+app.post('/imageurl', auth.requireAuth, (req, res) => { image.handleApiCall(req, res)})
+app.put('/image', auth.requireAuth, (req, res) => { 
   
   urlExists(req.body.imageUrl, (err, exists)=>{
     if (exists && (req.body.imageUrl.toLowerCase().includes('.jpg') || 
@@ -68,7 +73,6 @@ app.get('/ranking', (req, res)=> {
     .select('name', 'entries') 
     .orderBy('entries','desc') 
     .then(rows => {
-      // console.log(rows)
       res.json(rows)
     })
     .catch(err => console.log("ERROR " + err))

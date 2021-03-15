@@ -19,6 +19,7 @@
     "knex": "^0.21.6",
     "morgan": "^1.10.0",
     "pg": "^8.3.3",
+    "redis": "^3.0.2",
     "url-exists": "^1.0.3"
   },
   "devDependencies": {

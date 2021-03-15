@@ -1,0 +1,13 @@
+* SERVERLESS
+
+npm install -g SERVERLESS
+
+sls create -t aws-nodejs
+
+* AWS-LAMBDA ACCESS CONFIG
+
+sls config credentials --provider aws --key [key] --secret [secret]
+
+sls deploy
+
+sls invoke [local --> to simulate lambda function] --function [function]

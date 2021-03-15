@@ -1,4 +1,10 @@
 const jwt = require('jsonwebtoken')
+const redis = require('redis')
+
+// setup Redis:
+const redisClient = redis.createClient(process.env.REDIS_URI)
+
+
 
 const handleSignin = (db, bcrypt, req, res) => {
   const { email, password } = req.body;
@@ -56,27 +62,44 @@ const handleSignin = (db, bcrypt, req, res) => {
   //   .catch(err => res.status(400).json('wrong credentials'))
 }
 
-const getAuthTokenId = () => {
-  console.log('auth ok')
+const getAuthTokenId = (req, res) => {
+  const { authorization } = req.headers
+  return redisClient.get(authorization, (err, reply) => {
+    if (err || !reply) {
+      return res.status(400).json('Unauthorized attempt!')
+    }
+
+    return res.json({id: reply})
+  })
+
 }
 
 const signToken = (email) => {
   const jwtPayload = { email }
-  return jwt.sign(jwtPayload, 'superhiddenstring', { expiresIn: '2 days' })
+  return jwt.sign(jwtPayload, process.env.JWT_SECRET, { expiresIn: '2 days' })
+}
+
+const setToken = (key, value) => {
+  return Promise.resolve(redisClient.set(key, value))
 }
 
 const createSessions = (user) => {
   // JWT token, return user data
   
-  const { email } = user._user
+  const { email, id } = user._user
   const token = signToken(email)
-  return { success: 'true', user : {_user:user._user, _links:user._links}, token }
+  return setToken(token, id)
+            .then(() => { 
+              return { success: 'true', user: {_user:user._user, _links:user._links}, token }
+            })
+            .catch(console.log)
+  // return { success: 'true', user : {_user:user._user, _links:user._links}, token }
 }
 
 const signinAuthentication = (db, bcrypt) => (req,res) => {
   const { authorization } = req.headers
   return authorization ? 
-          getAuthTokenId() : 
+          getAuthTokenId(req, res) : 
           handleSignin(db, bcrypt, req, res)
             .then(data => {
               
@@ -87,5 +110,6 @@ const signinAuthentication = (db, bcrypt) => (req,res) => {
 }
 
 module.exports = {
-  signinAuthentication: signinAuthentication
+  signinAuthentication: signinAuthentication,
+  redisClient: redisClient
 }
