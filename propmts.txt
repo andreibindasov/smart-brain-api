@@ -11,3 +11,9 @@ sls config credentials --provider aws --key [key] --secret [secret]
 sls deploy
 
 sls invoke [local --> to simulate lambda function] --function [function]
+
+
+* https://stackabuse.com/uploading-files-to-aws-s3-with-node-js/
+
+
+
